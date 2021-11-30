@@ -74,24 +74,24 @@ Section Exercices.
     (* preuve sans lemme (coupure) *)
     Lemma L3 : P -> T.
     (* QUESTION: Quel est le séquent qu'on s'apprête à prouver? *)
-
+    (* REPONSE : (P -> Q),(P -> Q -> R),(Q -> R -> S),(Q -> R -> S -> T ) |- P -> T*)
     (* QUESTION: Faites-en une preuve papier AVANT de continuer *)
     Proof.
       intro p.
       apply H2.
-      apply H.
-      assumption.
-      apply H0.
-      assumption.
-      apply H.
-      assumption.
-      apply H1.
-      apply H. 
-      assumption.
-      apply H0.
-      assumption.
-      apply H. 
-      assumption.
+      - apply H.
+        assumption.
+      - apply H0.
+        + assumption.
+        + apply H.
+          assumption.
+      - apply H1.
+        + apply H. 
+          assumption.
+        + apply H0.
+          * assumption.
+          * apply H. 
+          assumption.
     Qed.
     (* QUESTION: Réécrivez le script ci-dessus en introduisant des tirets 
        (-, *, +) à chaque fois qu'une tactique engendre plus d'un 
@@ -146,23 +146,32 @@ Section Exercices.
 
   Lemma IdP : P -> P.
   Proof.
-  Admitted.
+   intro hP.
+   assumption.
+  Qed.
 
   Lemma IdPP : (P -> P) -> P -> P.
   Proof.
-  Admitted.
+  intros HPP Hp.
+  assumption.
+  Qed.
 
   (* sans regarder le fichier de demo, c'est de la triche *)
   Lemma imp_trans : (P -> Q) -> (Q -> R) -> P -> R.
   Proof.
-  Admitted.
+    intros Hpq Hqr Hp.
+    apply Hqr.
+    apply Hpq.
+    assumption.
+  Qed.
 
   Section proof_of_hyp_switch.
     Hypothesis H : P -> Q -> R.
     Lemma hyp_switch : Q -> P -> R.
     Proof.
-    Admitted. 
-
+      intros Hq Hp.
+      apply H;assumption.
+    Qed.
   End proof_of_hyp_switch.
 
   Check hyp_switch.
@@ -172,26 +181,55 @@ Section Exercices.
 
     Lemma add_hypothesis : P -> Q -> R.
     Proof.
-    Admitted.
+      intros Hp Hq.
+      apply H. assumption.
+    Qed.
 
   End proof_of_add_hypothesis.
 
   (* prouver le sequent (P -> P -> Q) |- P -> Q  
      (il faut l'énoncer, et faire la preuve) 
       *)
-  Section proof_of_remove_dup_hypothesis.
+  Section proof_of_remove_dup_hypothesis. 
+      (*TODO : (P -> P -> Q) |- P -> Q *)
+      Hypothesis H: P -> P -> Q.
+      Lemma my_hyp: P->Q.
+      Proof.
+        intro Hp.
+        apply H;assumption.
+      Qed.
 
   End proof_of_remove_dup_hypothesis.
 
+
   (* même exercice avec le séquent P->Q |- P->P->Q *)
   Section proof_of_dup_hypothesis.
-
+        Hypothesis H: P -> Q.
+        Lemma my_hyp_2: P->P->Q.
+        Proof.
+          intros.
+          apply H;assumption.
+        Qed.
+        
   End proof_of_dup_hypothesis.
 
   (* meme exercice avec 
      P -> Q , P -> R , Q -> R -> T |- P -> T  
    *)
   Section proof_of_distrib_impl.
+    Hypothesis H : P -> Q.
+    Hypothesis H0: P -> R.
+    Hypothesis H1: Q -> R -> T.
+    Lemma hyp3:P->T .
+    Proof.
+      intro Hp.
+      apply H1.
+      - apply H.          (*but Q*) 
+        assumption.
+      - apply H0.         (*but R*) 
+        assumption.  
+    Qed.
+    
 
   End proof_of_distrib_impl.
 
@@ -200,16 +238,38 @@ Section Exercices.
      (ex. 9 de la feuille "Logique minimale")
    *)
   Section proof_of_ex9.
-
+    Hypothesis H : P->Q . 
+    Hypothesis H0: Q->R . 
+    Hypothesis H1:(P->R)->T->Q .
+    Hypothesis H2:(P->R)->T  .
+    Lemma trouve_q: Q.
+    Proof.
+      assert (Hpr: P -> R ). {   (*but P->R*)
+      intro hp.
+      apply H0.
+      apply H;assumption.
+      }
+      apply H1.
+      - assumption.
+      - apply H2. assumption.
+    Qed.
+    
   End proof_of_ex9.
   
   (* exercice 10 de la feuille "Logique minimale" *)
   Section Proof_of_weak_Peirce.
 
-    Hypothesis H: (((P->Q)->P)->P)->Q.
+    Hypothesis H: (((P->Q)->P)->P)-> Q.
     Lemma weak_Peirce : Q.
     Proof.
-    Admitted.
+      apply H.
+      intro.
+      apply H0.
+      intro.
+      apply H.
+      intro.
+      assumption .
+    Qed.
 
   End Proof_of_weak_Peirce.
   Check weak_Peirce.
