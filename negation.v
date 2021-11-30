@@ -22,7 +22,8 @@ Section Negation.
      intro H0.
      apply H.
      intro H1.
-     apply H1; assumption.
+     apply H1.
+    assumption.
    Restart.  (* Annule la preuve en cours, et en commence un autre *)
    unfold not.
    auto.
@@ -35,18 +36,37 @@ Section Negation.
   (* QUESTION: Remplacer les Admitted par des scripts de preuve *)
   Lemma absurde: (P -> Q) -> (P -> ~Q) -> (P -> S).
   Proof.
-  Admitted.
+    intros.
+    absurd Q .
+    - apply H0.
+      assumption.
+    - apply H.
+      assumption.
+  Qed.
+  Check absurde.
 
   Lemma triple_abs: ~P -> ~~~P.
   Proof.
-  Admitted.
-  
+    intro Hnp.
+    intro Hnnp. 
+    apply Hnnp. (* lam |- ~~P == ~p -> _|_ *)
+    assumption.
+  Qed.
+
   Lemma absurd' : (~P -> P) -> ~~P.
   Proof.
-  Admitted.
+    intro.
+    intro.
+    absurd P .
+    (*but ~ p*)
+    - assumption.
+    (*but p *)
+    - apply H.
+      assumption.
+  Qed.
 
   Definition Peirce  := ((P -> Q) -> P) -> P.
-
+  Check Peirce .
   (* On va prouver non-non-Peirce *)
   Lemma Peirce_2 : ~~ Peirce.
   Proof.
@@ -55,54 +75,178 @@ Section Negation.
        entre Peirce et ~Peirce *)
     intro.
     assert (np: ~P).
-  Admitted. (* À vous de finir *)
+    {
+      intro.
+      apply H.
+      intro.
+      assumption.
+    }
+    apply H.
+    intro.
+    apply H0.
+    intro.
+    exfalso.
+    apply np.
+    assumption.
+  Qed.
 
   (* Une série de séquents à prouver; à chaque fois, il faut
   l'énoncer, en introduisant les hypothèses au moyen d'une
   sous-section. *)
 
   (* P->Q, R->~Q, P->R |- P->S *)
+  Section myT01.
+    Hypothesis H: P->Q.
+    Hypothesis H0: R->~Q.
+    Hypothesis H1: P->R.
+
+    Lemma my_01: P->S.
+      Proof.
+      intro .
+      absurd Q.
+      (* but ~Q *)
+      - apply H0.
+        apply H1.
+        assumption.
+      (*but Q*)
+      - apply H.
+        assumption. 
+      Qed.
+  End myT01.
 
   (* ~P->~Q |- ~~Q->~~P *)
+  Section myT02.
+    Hypothesis H: ~P->~Q.
+
+    Lemma my_02: ~~Q->~~P.
+      Proof.
+        intro.
+        intro.
+        absurd (~Q).
+        - assumption.
+        - apply H.
+          assumption.
+      Qed.
+  End myT02.
 
   (* P->~P |- ~P *)
+  Section myT03.
+    Hypothesis H: P->~P.
+
+    Lemma my_03:  ~P.
+      Proof.
+        intro .
+        absurd P.
+        - apply H.
+          assumption.
+        - assumption.
+      Qed.
+  End myT03.
 
   (* ~~P |- ~P->~Q *)
+  Section myT04.
+    Hypothesis H: ~~P.
 
+    Lemma my_04: ~P -> ~Q.
+      Proof.
+        intro.
+        absurd (~P);assumption.
+      Qed.
+  End myT04.
   (* P->~Q, R->Q |- P->~R *)
+  Section myT05.
+    Hypothesis H:P->~Q.
+    Hypothesis H0: R->Q.
+
+    Lemma my_05: P->~R.
+      Proof.
+        intro.
+        intro.
+        absurd Q.
+        (*but ~Q*)
+        - apply H.
+          assumption.
+        (*but Q*)
+        - apply H0.
+          assumption. 
+      Qed.
+  End myT05.
 
   (* ~(P->Q) |- ~Q *)
-  
+  Section myT06.
+    Hypothesis H:~(P->Q).
+    Lemma my_06: ~Q.
+      Proof.
+        intro.
+        apply H.
+        intro.
+        assumption.
+      Qed.
+  End myT06.
 
   (* Séquents proposés en test par le passé *)
 
   Section Test01.
-    
     Hypothesis H: P->Q.
-
     Lemma Ex01: ~(~Q->~P) -> R.
-    Admitted.
+    Proof.
+      intro.
+      absurd (P->Q).
+      (*but ~ P->Q *)
+      - intro.
+        apply H0.
+        intro.
+        intro.
+        apply H2.
+        apply H.
+        assumption.
+        (* absurd Q.
+        * assumption.
+        * apply H.
+          assumption. *)
+      (*but  P->Q *)
+      - assumption .
+    Qed.
   End Test01.
 
   Section Test02.
     Hypothesis H: ~(P->R).
 
     Lemma Ex02: Q->(P->Q->R)->P.
-    Admitted.
+    Proof.
+      intros.
+      absurd (P->R).
+      - assumption.
+      - intro.
+        apply H1;assumption. 
+    Qed.
+    
   End Test02.
 
   Section Test03.
     Hypothesis H: ~(Q->R).
 
     Lemma Ex03: (P->Q->R)->(P->Q).
-    Admitted.
+      Proof.
+        intros.
+        absurd (Q->R).
+        - assumption .
+        - apply H0;assumption. 
+      Qed.
   End Test03.
 
   Section Test04.
     Hypothesis H: ~~P.
 
     Lemma Ex04: Q->(P->Q->False)->P.
-    Admitted.
+    Proof.
+      (* intros.
+      exfalso.
+      apply H.
+      - exfalso.
+        apply H1. 
+       *)
+    Qed.
   End Test04.
     
 End Negation.
