@@ -14,26 +14,68 @@ Variables P Q R S: Prop.
 
 Lemma contraposee: (P->Q) -> (~Q->~P).
 Proof.
-Admitted.
+   intros.
+   unfold not .
+   intro.
+   absurd(Q).
+   -assumption.
+   - apply H.
+      assumption.
+Qed.
 
 Lemma autre_contraposee: (P->~Q) -> (Q->~P).
-Proof.
-Admitted.
+   Proof.
+      intros.
+      intro.
+      absurd Q.
+      - apply H.
+         assumption.
+      -assumption.
+   Qed.
 
 Lemma DS1: ((P->Q)->R)->((~P->~Q)->~R)->(P->Q->S).
-Proof.
-Admitted.
+   Proof.
+      intros.
+      exfalso.
+      apply H0.
+      - intro.
+         absurd P;assumption.
+      - apply H.
+         intro.
+         assumption.
+   Qed.
 
 Lemma DS2: (P->Q)->~(R->Q)->(~R->S) -> (R->P->S).
-Proof.
-Admitted.
+   Proof.
+   intros.
+   assert (Hq : Q ).
+   {
+      apply H.
+      assumption.
+   }
+   assert(Hrq : R->Q).
+   {
+      intro.
+      assumption.
+   }
+   absurd (R->Q);assumption.
+   Qed.
 
 (* Ne pas foncer sans réfléchir *)
 Lemma piege: (P->~Q)->(~Q->R)->(R->~S)->(~S->~P) -> ~P.
-Proof.
-intros.
-(* à compléter *)
-Admitted.
+   Proof.
+   intros.
+   intro.
+   apply H2.
+   (* pour ~S *)
+   - apply H1.
+     apply H0.
+     apply H.
+     assumption.
+
+   (* pour P   *)
+   - assumption.  
+   Qed.
 
 End Complements_Negation.
 
@@ -42,8 +84,11 @@ Section Double_Negation.
 Variables P Q: Prop.
 (* De P, on peut déduire non-non-P *)
 Lemma dn_i: P-> ~~P.
-Proof.
-Admitted.
+   Proof.
+      intro.
+      intro.
+      absurd P;assumption.
+   Qed.
 
 (* On a prouvé dans absurd' (fichier negation.v), que, de "non-P implique P",
    on peut déduire, peut-être pas P, mais au moins non-non-P *)
@@ -52,8 +97,14 @@ Admitted.
    de "non-P implique P", alors on peut justifier l'élimination de
    la double négation [pour P] *)
 Lemma trop_de_negations: ((~P->P)->P) -> (~~P -> P).
-Proof.
-Admitted.
+   Proof.
+      intros.
+      apply H.
+      intro.
+      exfalso.
+      apply H0.
+      assumption.
+   Qed.  
 
 End Double_Negation.
 
@@ -85,7 +136,18 @@ Variables P Q R S: Prop.
   (* Séquent à prouver: 
      (P->Q)->~Q |- (P->Q)->~P
   *)
-  
+   Hypothesis H:(P->Q)->~Q .
+   Lemma  S1:(P->Q)->~P.
+   Proof.
+      intro.
+      intro.
+      apply H.
+      -assumption .
+      - apply H0.
+         assumption .
+   Qed.
+   
+
   End Sequent1.
 
   Section Sequent2.
@@ -99,7 +161,22 @@ Variables P Q R S: Prop.
   (* Séquent à prouver:
      P->Q, ~P->Q |- ~~Q
   *)
-  
+   Hypothesis H :P->Q.
+   Hypothesis H0 :~P->Q.
+   Lemma S2: ~~Q.
+
+   Proof.
+      intro.
+      apply H1.
+      apply H0.
+      intro.
+      absurd Q .
+      - assumption.
+      - apply H;assumption.
+      (* apply H1.
+      apply H;assumption. *)
+Qed.
+    
   End Sequent3.
 
 End Preuves_de_sequents.

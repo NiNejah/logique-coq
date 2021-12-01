@@ -14,8 +14,9 @@ Section LJ.
  Lemma and_comm : P /\ Q -> Q /\ P.
  Proof.
    intro H.
-   destruct H as [H0 H1].
-   split; assumption. (* "assumption" résout les deux sous-buts *)
+   destruct H as [H0 H1]. (* /\e *) 
+   (* " split /\i " *)
+   split;assumption. (* "assumption" résout les deux sous-buts *)
  Qed.
 
  (* tactiques pour la disjonction 
@@ -96,8 +97,10 @@ Section LJ.
   (*  Exercices de la feuille 4 *)
 
   Lemma and_false : P /\ False -> False.
-  Proof. 
-    tauto.
+  Proof.
+    intro Hpf.
+    destruct Hpf.
+    assumption. 
   Qed.
 
   Lemma and_assoc : (P /\ Q) /\ R <-> P /\ (Q /\ R).
