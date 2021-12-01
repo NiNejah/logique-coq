@@ -105,55 +105,149 @@ Section LJ.
 
   Lemma and_assoc : (P /\ Q) /\ R <-> P /\ (Q /\ R).
   Proof.
-    tauto.
+    split.
+    - intros.
+      destruct H as [Hpq Hr].
+      destruct Hpq as [Hp Hq].
+      split.
+      assumption.
+      split;assumption.
+    - intros.
+      destruct H as [Hp Hqr].
+      destruct Hqr as [Hq Hr].
+      split.
+      split;assumption.
+      assumption.
   Qed.
 
   (* Ex. 2 *)
   Lemma or_to_imp: ~ P \/ Q -> P -> Q.
   Proof.
-   tauto.
+    intros.
+    destruct H.
+    absurd (P);assumption.
+    assumption.
   Qed.   
 
   Lemma not_or_and_not: ~(P\/Q) -> ~P /\ ~Q.
   Proof.
-    tauto.
+    intros.
+    split .
+    (* but ~P *)
+    - intro.
+      apply H.
+      left;assumption.
+    (* but ~Q *)
+    - intro.
+      apply H.
+      right;assumption.
   Qed.
 
   (* Exercice 4 *)
 
   Lemma absorption_or: P \/ False <-> P.
   Proof.
-    tauto.
+    split.
+    - intro.
+      destruct H.
+      + assumption.
+      + exfalso.
+        assumption.
+    - intro.
+      left;assumption.
   Qed.
 
   Lemma and_or_dist : P /\ (Q \/ R) <-> P /\ Q \/ P /\ R.
   Proof.
-    tauto.
+    split.
+    - intros.
+      destruct H as [Hp Hqr].
+      destruct Hqr.
+      (* avec Q  *)
+      + left.
+        split;assumption.
+      (* avec R *)
+      + right.
+        split;assumption.
+    - intros.
+      destruct H .
+      (* avec p /\ Q *)
+      + destruct H .
+        split.
+        * assumption.
+        * left.
+          assumption.
+       (* avec P/\R  *)
+      + destruct H.
+        split.
+        * assumption.
+        * right.
+          assumption.
   Qed.
 
   Lemma or_and_dist : P \/ (Q /\ R) <-> (P \/ Q) /\ (P \/ R).
   Proof.
-    tauto.
+    split.
+    - intros.
+      destruct H.  
+      split.
+      (* avec P  *)
+       left;assumption.
+       left; assumption.
+      (* avec (Q /\ R) *)
+       destruct H.
+       split.
+       right;assumption.
+       right;assumption.
+    - intros.
+      destruct H.
+      destruct H.
+      + left;assumption.
+      + destruct H0.
+        * left ; assumption .
+        * right .
+        split;assumption.
   Qed.
 
   Lemma and_not_not_impl: P /\ ~ Q -> ~(P -> Q).
   Proof.
-    tauto.
+    intros.
+    intro.
+    destruct H.
+    apply H1.
+    apply H0;assumption.
   Qed.
 
   Lemma de_morgan1 : ~ (P \/ Q) <-> ~P /\ ~Q.
   Proof.
-    tauto.
+    split.
+    (* not_or_and_not *)
+    - auto.
+    - intros.
+      intro.
+      destruct H.
+      destruct H0.
+      absurd (P);assumption.
+      absurd Q ;assumption .
   Qed.
 
   Lemma reductio_ad_absurdum: (P -> ~P) -> ~P.
   Proof.
-    tauto.
+    intro.
+    intro.
+    absurd P .
+    - apply H ; assumption .
+    - assumption.
   Qed.
 
   Lemma np_p_nnp: (~P -> P) -> ~~P.
   Proof.
-    tauto.
+    intro.
+    intro.
+    absurd P .
+    - assumption.
+    - apply H.
+      assumption.
   Qed.
 
   (* Exercice: reprendre toutes les preuves précédentes, 
