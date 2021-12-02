@@ -51,35 +51,143 @@ Section LK.
 
   Lemma de_morgan : ~ ( P /\ Q) <-> ~P \/ ~Q.
   Proof.
-  Admitted.
+
+    split .
+    - intro.
+      add_exm P .
+      destruct exm.
+       (* 1. *)
+      + right.
+        intro.
+        apply H.
+        split;assumption.
+
+       (*  2. 
+        classical_right.
+        intro.
+        apply H.
+        split;assumption. *)
+      + left.
+        assumption.
+      
+    - intro .
+      intro.
+      destruct H0.
+      destruct H.
+      * absurd P;assumption.
+      * absurd Q;assumption.
+      (* * destruct H0.
+        absurd P;assumption.
+      * destruct H0.
+      absurd Q;assumption. *)
+  Qed.
 
   Lemma not_impl_and : ~(P -> Q) <-> P /\ ~ Q.
   Proof.
-  Admitted.
+    split.  
+    - intro.
+      split.
+      + add_exm P.
+        destruct exm.
+        * assumption .
+        * exfalso.
+          apply H.
+          intro.
+          absurd P ; assumption.
+      + add_exm Q.
+        destruct exm.
+        * exfalso .
+          apply H.
+          intro .
+          assumption.
+        * assumption.
+    - intro.
+      intro.
+      apply H.
+      destruct H.
+      apply H0;assumption.      
+  Qed.
 
   Lemma contraposee: (P -> Q) <-> (~Q -> ~P).
   Proof.
-  Admitted.
+    split.
+    -intros.
+      intro.
+      absurd Q.
+      assumption.
+      apply H;assumption.
+
+    - intros.
+      add_exm Q.
+      destruct exm.
+      * assumption.
+      * absurd P.
+        + apply H.
+          assumption.
+        + assumption. 
+  Qed.
 
   Lemma exm_e : (P -> Q) -> (~P -> Q) -> Q.
   Proof.
-  Admitted.
+    intros.
+    add_exm P.
+    destruct exm.
+    - apply H;assumption.
+    - apply H0;assumption.
+
+  Qed.
+  
 
   Lemma exo_16 : (~ P -> P) -> P.
   Proof.
-  Admitted.
+    intro.
+    add_exm P.
+    destruct exm.
+    * assumption.
+    * apply H.
+      assumption.
+  Qed.
+
 
   Lemma double_impl : (P -> Q) \/ (Q -> P).
   Proof.
-  Admitted.
+    classical_right.
+    intro.
+    exfalso.
+    apply H.
+    intro.
+    assumption.
+  Qed.
 
   Lemma imp_translation : (P -> Q) <-> ~P \/ Q.
   Proof.
-  Admitted.
+    split .
+    -intro.
+      classical_left.
+      add_exm P.
+      destruct exm.
+      + absurd Q.
+        assumption.
+        apply H.
+        assumption.
+      + assumption.
+    - intro.
+      intro.
+      destruct H.
+      * absurd P; assumption.
+      * assumption.
+  Qed.
 
   Lemma Peirce : (( P -> Q) -> P) -> P.
   Proof.
-  Admitted.
+    intro.
+    add_exm P.
+    destruct exm.
+    - assumption.
+    - apply H.
+     intro.
+     absurd P;assumption.
+  Qed.
 
   (* Quelques exercices d'anciens tests *) 
   Lemma test_1: (P->Q)->(~P->R)->(R->Q)->Q.
