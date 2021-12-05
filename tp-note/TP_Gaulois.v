@@ -47,27 +47,63 @@ Section Gaulois.
   
   Theorem Exercice1: ~ gaulois Idefix.
   Proof.
-  Admitted.
+    intro.
+    forall_e Hnon_humain_animal Idefix.
+    destruct H0.
+    split.
+    - rewrite Hhum.
+      left.
+      assumption.
+    -assumption.
+  Qed.
 
   Theorem Exercice2:
     forall p:personnage, humain p -> ~romain p -> gaulois p.
   Proof.
-  Admitted.
+    intros.
+    forall_e Hhum p.
+    destruct H1.
+    destruct H1.
+    -assumption.
+    -assumption.
+    - contradiction.
+  Qed.
 
   Theorem Exercice3:
     exists p:personnage, humain p /\ ~gaulois p.
   Proof.
-  Admitted.
+    destruct Hrom as [p Hrp].
+    exists p.
+    split.
+    - destruct (Hhum p).
+      apply H0.
+      right.
+      assumption.
+    - intro.
+      forall_e Hngr p.
+      apply H0.
+      split.
+      + assumption.
+      + assumption.
+  Qed.
 
   Theorem Exercice4:
     forall p, ~animal p -> gaulois p \/ romain p.
   Proof.
-  Admitted.
+    intros.
+    destruct (Hpers p).
+    - contradiction.
+    -assumption.
+  Qed.
 
   Theorem Exercice5: Idefix <> Panoramix.
   Proof.
+    intro.
+    (* rewrite Hpano as H. *)
+    destruct H.
+    apply Exercice1.
+    assumption.
+  Qed.
     (* Indication: on peut utiliser n'importe quel théorème, 
        y compris un qui a été prouvé comme exercice *)
-  Admitted.
-
 End Gaulois.

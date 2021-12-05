@@ -468,7 +468,7 @@ Section TypeVideClassique.
     unfold not .
     intro.
     auto.
-
+  (*"not finiched"*)
   Admitted.
     (* absurdK. *)
 
