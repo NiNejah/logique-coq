@@ -54,6 +54,12 @@ Section Syllogismes. (* Entrainements *)
 
   Lemma contraposee : forall x, ~ mortel x -> ~ humain x.
   Proof.  
+    (* intro.
+    intro.
+    intro.
+    apply H.
+    apply HM.
+    assumption. *)
     intros x Hx H.
     unfold not in Hx.
     apply Hx.
@@ -139,7 +145,9 @@ Section Egalite. (* Entrainements, sur l'egalite *)
   Lemma L4 : forall x y:A, f x <> f y -> x <> y.
   Proof.
     intros.
-
+    intro.
+    rewrite H0 in H.
+    contradiction.
   Qed.
 
 End Egalite.
@@ -175,17 +183,54 @@ Section QuelquesPreuves.
   Lemma Question2 : (forall x, P x) \/ (forall x, Q x) ->
                     forall x, P x \/ Q x.
   Proof.
-  Admitted.
+    intro.
+    intro x .
+    destruct H .
+    - left .
+      apply H.
+    - right .
+      apply H.
+  Qed.
   
   Lemma Question3 : (exists x:A, P x /\ Q x) ->
                     (exists x:A, P x) /\  (exists x:A, Q x).
   Proof.
-  Admitted.
+    intro.
+    split.
+    - destruct H.
+      exists x.
+      destruct H.
+      assumption.
+    - destruct H.
+      destruct H.
+      exists x.
+      assumption.
+  Qed.
 
   Lemma Question4 : (exists x:A, P x \/ Q x) <->
                     (exists x:A, P x) \/   (exists x:A, Q x).
   Proof.  
-  Admitted.
+    split.
+    - intro.
+      destruct H.
+      destruct H.
+      * left.
+          exists x.
+          assumption.
+      * right .
+        exists x.
+        assumption. 
+    - intro.
+      destruct H.
+      destruct H.
+      * exists x.
+        left .
+        assumption.
+      * destruct H.
+        exists x.
+        right.
+        assumption. 
+  Qed.
 
   Section Question5.
     Hypothesis H : forall x, P x -> Q x.
@@ -193,30 +238,71 @@ Section QuelquesPreuves.
 
     Lemma L5 : exists x, Q x.
     Proof.
-    Admitted.
+      destruct H0.
+      exists x.
+      apply H.
+      assumption.
+    Qed.
+    (* Admitted. *)
 
   End Question5.
  
   (* Attention au parenthésage *)
   Lemma Question6 : forall x,  P x -> exists y,  P y.
   Proof.
-  Admitted.
+    intros.
+    exists x.
+    assumption. 
+  Qed.
  
   Lemma Question7 : ~(exists x, P x) <-> forall x, ~ P x.
-  Proof.                                      
-  Admitted.
+  Proof.
+    split.
+    - intro.
+      intro.
+      intro.
+      apply H.
+      exists x.
+      assumption.
+    - intros.
+      intro.
+      destruct H0.
+      absurd (P x).
+      apply H.
+      assumption.
+
+  Qed.                                      
 
   (* Ici, X joue le rôle de n'importe quelle proposition où x n'est
      pas libre *)
   Lemma Question8 : ((exists x, P x) -> X) <->
                      forall x, P x -> X.
+          
   Proof.
-  Admitted.
+    split.
+    - intros.
+      apply H.
+      exists x.
+      assumption.
+    - intro.
+      intro.
+      destruct H0.
+      forall_e H x.
+      apply H1.
+      assumption.
+  Qed.
+  (* Admitted. *)
 
   Lemma Question9 :  (exists x:A, forall y:B, R x y)
                       -> (forall y:B, exists x:A, R x y).
   Proof. 
-  Admitted.
+    intro.
+    intro.
+    destruct H .
+    exists x.
+    forall_e H y.
+    assumption.
+  Qed.
 
   (* Sur l egalite *)
   Lemma eq_sym : forall x y:A, x = y -> y = x.
@@ -228,7 +314,10 @@ Section QuelquesPreuves.
 
   Lemma eq_trans : forall x y z:A, x = y -> y = z -> x = z.
   Proof.
-  Admitted.
+    intros.
+    rewrite H.
+    assumption.
+  Qed.
 
 End QuelquesPreuves.
 
@@ -243,11 +332,26 @@ Section TypeVide.
   Lemma TV1 : A_est_vide -> forall x:A, P x.
   Proof.
     unfold A_est_vide. (* A compléter *)
-  Admitted.
+    intro.
+    intro.
+    exfalso.
+    forall_e H x.
+    unfold not in H0.
+    apply H0.
+    reflexivity.
+  Qed.
 
   Lemma TV2 : (forall x y:A, x <> y) -> A_est_vide.
   Proof.
-  Admitted.
+    intros.
+    unfold A_est_vide.
+    intro.
+    unfold not.
+    intro.
+    forall_e H x.
+    forall_e H1 x.
+    contradiction.
+  Qed.
 
 End TypeVide.
 
@@ -283,12 +387,54 @@ Section classic.
   Proof.   
     split; intro H.
     - absurdK.
-  Admitted. (* finir la preuve; l'autre sens est intuitionniste *)
+      destruct H.
+      intro.
+      (* start  *)
+      absurdK.
+      apply H0.
+      exists x.
+      assumption.
+     (* end  *)
+    - destruct H.
+      intro.
+      apply H.
+      apply H0.
+  Qed.
+
+
+    (* Admitted. finir la preuve; l'autre sens est intuitionniste *)
 
   (* Dans le même esprit *)
   Lemma Classical_Question2: ~(forall x, P x /\ Q x) <-> exists x, ~ P x \/ ~ Q x.
   Proof.
-  Admitted.
+    split.
+    - intro.
+      absurdK.
+      destruct H.
+      intro.
+      split. (* pour P x /\ Q x : - P x ; - Q x*)
+       (* prouve de P  *)
+      + absurdK .
+        destruct H0.
+        exists x.
+        left.
+        assumption.
+        (* prouve de Q *)
+      + absurdK .
+        destruct H0.
+        exists x.
+        right .
+        assumption. 
+    - intro .
+      (* absurdK . *)
+      intro.
+      destruct H.
+      destruct H.
+      apply H.
+      apply H0.
+      apply H.
+      apply  H0.
+  Qed.
 
 
 (* On complète la section "TypeVide", mais en classique *)
@@ -303,14 +449,31 @@ Section TypeVideClassique.
   Hypothesis H : ~ B_est_vide.
   Hypothesis H0 : forall x:B, PP x.
     
-  Lemma forall_to_exists : exists x:B, PP x. (* difficile *)
+  Lemma forall_to_exists : exists x:B, PP x. (* PAS difficile *)
   Proof.
     unfold B_est_vide in H.
     assert (exists x:B, x = x).
-    {  absurdK.
-       admit.
+    { absurdK. 
+      destruct H.
+      intro. (*x <> x*) 
+      absurdK.
+      apply H1.
+      exists x.
+      reflexivity.
     }
-  Admitted. (* Compléter la preuve, y compris le "admit" *)
+    exfalso .
+    apply H.
+    intro.
+    (* destruct H1 as [x0 Hxx]. *)
+    unfold not .
+    intro.
+    auto.
+
+  Admitted.
+    (* absurdK. *)
+
+
+    (* Compléter la preuve, y compris le "admit" *)
 
 End TypeVideClassique.
     
@@ -333,7 +496,20 @@ Section drinkers_problem. (* Problème du buveur *)
     exists p:people, (boit p -> forall q, boit q).
   Proof.
     add_exm (forall q, boit q).
- Admitted. (* Comme précédemment: compléter la preuve *)
+    destruct exm0.
+    (* avec "P"  *)
+    - exists patron.
+      intro.
+      assumption.
+    - absurdK.
+      apply H.
+      intro.
+      absurdK.
+      apply H0.
+      exists q.
+      intro.
+      contradiction.
+  (* Comme précédemment: compléter la preuve *)
 
 End drinkers_problem.
 End classic.
